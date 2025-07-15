@@ -19,7 +19,7 @@ public class UserController {
     public ResponseEntity<?> getCoffeeList(){
         try{
             List<Coffee> coffees = userService.getAllCoffee();
-            return ResponseEntity.ok("getCoffeeList:\n"+coffees);
+            return ResponseEntity.ok(coffees);
         }catch(CoffeeServiceException e){
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
@@ -29,7 +29,7 @@ public class UserController {
     public ResponseEntity<?> getCoffeeById(@PathVariable Integer id){
         try{
             Coffee coffee = userService.getCoffeeById(id);
-            return ResponseEntity.ok("getCoffeeById:\n"+coffee);
+            return ResponseEntity.ok(coffee);
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }catch(CoffeeServiceException e){
@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity<?> addNewCoffee(@Valid @RequestBody Coffee coffee){
         try{
             Coffee saveCoffee = userService.addCoffee(coffee);
-            return ResponseEntity.status(201).body("addcoffee:\n"+saveCoffee);
+            return ResponseEntity.status(201).body(saveCoffee);
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }catch(CoffeeServiceException e){

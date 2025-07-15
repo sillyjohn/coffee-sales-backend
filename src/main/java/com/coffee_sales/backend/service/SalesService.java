@@ -111,7 +111,35 @@ public class SalesService {
             throw new SalesServiceException("Failed to insert new sales into the Sales table.");
         }
     }
-    //TODO: find most sold coffee
-    //TODO: find least sold coffee
+
+    public void removeSalesById(Integer id){
+        try{
+            if(!salesRepo.existsById(id)){
+                throw new SalesServiceException("Sales not found.");
+            }
+            salesRepo.deleteById(id);
+        }catch(DataAccessException e){
+            throw new SalesServiceException("Failed to remove sales "+id+" from the table.");
+        }
+    }
+
+    public Coffee findMostSoldCoffee(){
+        try{
+            Integer coffee_id = salesRepo.countMostSoldCoffeeId();
+            return userService.getCoffeeById(coffee_id);
+        }catch(DataAccessException e){
+            throw new SalesServiceException("Failed to fetch the most sold coffee in table.");
+        }
+    }
+
+    public Coffee findLeastSoldCoffee(){
+        try{
+            Integer coffee_id = salesRepo.countLeastSoldCoffeeId();
+            return userService.getCoffeeById(coffee_id);
+        }catch(DataAccessException e){
+            throw new SalesServiceException("Failed to fetch the least sold coffe in the table.");
+        }
+    }
     //TODO: find user with most purchase
+
 }

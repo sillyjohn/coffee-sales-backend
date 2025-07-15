@@ -31,7 +31,7 @@ public class SalesController {
         }
     }
 
-    @GetMapping("/id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getSalesRecordById(@PathVariable @Positive Integer id){
         try{
             Sales sales = salesService.getSalesRecordById(id);
@@ -53,7 +53,7 @@ public class SalesController {
         }
     }
 
-    @GetMapping("/salescount/{/id}")
+    @GetMapping("/salescount/{id}")
     public ResponseEntity<?> getSalesCountById(@PathVariable @Positive Integer id){
         try{
             Integer count = salesService.findTotalSalesCountBySalesId(id);
@@ -88,7 +88,9 @@ public class SalesController {
             return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
         }
     }
-
+    //TODO: removesalse
+    //TODO: findmostsold
+    //TODO: findleastsold
 
 
 }
