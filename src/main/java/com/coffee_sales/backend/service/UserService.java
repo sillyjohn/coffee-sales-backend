@@ -77,6 +77,4 @@ public class UserService {
             throw new CoffeeServiceException("Failed to remove a coffee by Coffee Id: "+id, e);
         }
     }
-
-
 }

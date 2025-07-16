@@ -4,6 +4,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.action.internal.OrphanRemovalAction;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,13 +25,11 @@ public class AppUser {
     private String username;
     @NotNull
     private String password;
-    @NotNull
-    private String year;
-    @NotNull
-    private String month;
-    @NotNull
-    private String day;
     private Integer phoneNumber;
     private String email;
-
+    @NotNull
+    @Column(name = "Date of Birth", nullable = false)
+    private LocalDate dateOfBirth;
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sales> salesList = new ArrayList<>();
 }

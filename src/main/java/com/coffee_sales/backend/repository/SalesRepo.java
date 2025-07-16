@@ -1,10 +1,12 @@
 package com.coffee_sales.backend.repository;
+import com.coffee_sales.backend.entity.AppUser;
 import com.coffee_sales.backend.entity.Sales;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 public interface SalesRepo extends JpaRepository<Sales,Integer> {
@@ -29,4 +31,6 @@ public interface SalesRepo extends JpaRepository<Sales,Integer> {
     //TODO: user with most purchase custom query
     @Query(value = "SELECT user_id FROM sales GROUP BY user_id ORDER BY COUNT(*) DESC LIMIT 1", nativeQuery = true)
     Integer countMostFrequentUser();
+
+    List<Sales> findByAppUser_Id(Integer id);
 }

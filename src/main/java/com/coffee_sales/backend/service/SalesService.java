@@ -2,6 +2,7 @@ package com.coffee_sales.backend.service;
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.entity.Sales;
 import com.coffee_sales.backend.entity.AppUser;
+import com.coffee_sales.backend.exception.AppUserServiceException;
 import com.coffee_sales.backend.exception.CoffeeServiceException;
 import com.coffee_sales.backend.exception.SalesServiceException;
 import com.coffee_sales.backend.repository.AppUserRepo;
@@ -25,6 +26,8 @@ public class SalesService {
     private AppUserRepo appUserRepo;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AppUserService appUserService;
 
     public List<Sales> getAllSalesRecord(){
         try{
@@ -40,7 +43,7 @@ public class SalesService {
         }
         try{
             return salesRepo.findById(id)
-                    .orElseThrow(()-> new SalesServiceException("Sales with ID "+ id + "not found."));
+                    .orElseThrow(()-> new SalesServiceException("Sales with ID " + id + "not found."));
         }catch(DataAccessException e){
             throw new SalesServiceException("Failed to fetch sales record by id.");
         }
@@ -87,15 +90,16 @@ public class SalesService {
             Sales sale = new Sales();
             Coffee existCoffee = userService.getCoffeeById(coffee.getId());
             sale.setCoffee(existCoffee);
-            //TODO: add user new user services for looking up user entity from db
-            sale.setAppUser(user);
+            AppUser existUser = appUserService.findUserById(user.getId());
+            sale.setAppUser(existUser);
             return addSales(sale);
         }catch(IllegalArgumentException e){
             throw new IllegalArgumentException("Create Sales Entity:"+e.getMessage());
         }catch(CoffeeServiceException e){
             throw new SalesServiceException("Create Sales Entity: Failed to find coffee.");
-        }//TODO: add catch() to catch exception from user related service
-
+        }catch(AppUserServiceException e){
+            throw new SalesServiceException("Create Sales Entity: Failed to find user");
+        }
     }
     public Sales addSales(@NotNull Sales sales){
         if(sales.getCoffee() == null){
@@ -141,5 +145,7 @@ public class SalesService {
         }
     }
     //TODO: find user with most purchase
+
+
 
 }
