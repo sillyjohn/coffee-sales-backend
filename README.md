@@ -4,7 +4,7 @@ Hi guys, this is my toy project to create a full stack application using knowled
 
 
 ## Application Properties
-
+Please manually add this application properties into your project directory.
 ```xml
 spring.application.name=Coffee Sales Backend
 
@@ -13,8 +13,8 @@ spring.application.name=Coffee Sales Backend
 
 #Postgresql Database Configuration
 spring.datasource.url=jdbc:postgresql://localhost:5432/coffeesalesdb
-spring.datasource.username=coffee
-spring.datasource.password=coffee
+spring.datasource.username= {YOUR DATEBASE USRNAME}
+spring.datasource.password= {YOUR DATABASE PWD}
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.hibernate.ddl-auto=update
