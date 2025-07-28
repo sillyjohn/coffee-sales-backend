@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.action.internal.OrphanRemovalAction;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,8 +25,11 @@ public class AppUser {
     private String username;
     @NotNull
     private String password;
-    private Integer phoneNumber;
+    private long phoneNumber;
+    @NotNull
     private String email;
+    @NotNull
+    private String role;
     @NotNull
     @Column(name = "Date of Birth", nullable = false)
     private LocalDate dateOfBirth;

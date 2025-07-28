@@ -1,7 +1,7 @@
 package com.coffee_sales.backend.controller;
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.exception.CoffeeServiceException;
-import com.coffee_sales.backend.service.UserService;
+import com.coffee_sales.backend.service.CoffeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +13,12 @@ import java.util.*;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private CoffeeService coffeeService;
 
     @GetMapping
     public ResponseEntity<?> getCoffeeList(){
         try{
-            List<Coffee> coffees = userService.getAllCoffee();
+            List<Coffee> coffees = coffeeService.getAllCoffee();
             return ResponseEntity.ok(coffees);
         }catch(CoffeeServiceException e){
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getCoffeeById(@PathVariable Integer id){
         try{
-            Coffee coffee = userService.getCoffeeById(id);
+            Coffee coffee = coffeeService.getCoffeeById(id);
             return ResponseEntity.ok(coffee);
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -41,7 +41,7 @@ public class UserController {
     @PostMapping("/addcoffee")
     public ResponseEntity<?> addNewCoffee(@Valid @RequestBody Coffee coffee){
         try{
-            Coffee saveCoffee = userService.addCoffee(coffee);
+            Coffee saveCoffee = coffeeService.addCoffee(coffee);
             return ResponseEntity.status(201).body(saveCoffee);
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -53,7 +53,7 @@ public class UserController {
     @DeleteMapping("/removecoffee")
     public ResponseEntity<?> removeCoffee(@Valid @RequestBody Coffee coffee){
         try{
-            userService.removeCoffeeByCoffee(coffee);
+            coffeeService.removeCoffeeByCoffee(coffee);
             return ResponseEntity.ok(Map.of("message","Coffee deleted successfully."));
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
@@ -66,7 +66,7 @@ public class UserController {
     @DeleteMapping("/removecoffee/{id}")
     public ResponseEntity<?> removeCoffeeById(@PathVariable Integer id){
         try{
-            userService.removeCoffeeById(id);
+            coffeeService.removeCoffeeById(id);
             return ResponseEntity.ok(Map.of("message","Coffee deleted successfully."));
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));

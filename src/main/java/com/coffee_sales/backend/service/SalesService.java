@@ -11,7 +11,6 @@ import com.coffee_sales.backend.repository.SalesRepo;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,7 +24,7 @@ public class SalesService {
     @Autowired
     private AppUserRepo appUserRepo;
     @Autowired
-    private UserService userService;
+    private CoffeeService coffeeService;
     @Autowired
     private AppUserService appUserService;
 
@@ -88,7 +87,7 @@ public class SalesService {
     public Sales createSalesEntity(@NotNull Coffee coffee, @NotNull AppUser user) {
         try {
             Sales sale = new Sales();
-            Coffee existCoffee = userService.getCoffeeById(coffee.getId());
+            Coffee existCoffee = coffeeService.getCoffeeById(coffee.getId());
             sale.setCoffee(existCoffee);
             AppUser existUser = appUserService.findUserById(user.getId());
             sale.setAppUser(existUser);
@@ -130,7 +129,7 @@ public class SalesService {
     public Coffee findMostSoldCoffee(){
         try{
             Integer coffee_id = salesRepo.countMostSoldCoffeeId();
-            return userService.getCoffeeById(coffee_id);
+            return coffeeService.getCoffeeById(coffee_id);
         }catch(DataAccessException e){
             throw new SalesServiceException("Failed to fetch the most sold coffee in table.");
         }
@@ -139,7 +138,7 @@ public class SalesService {
     public Coffee findLeastSoldCoffee(){
         try{
             Integer coffee_id = salesRepo.countLeastSoldCoffeeId();
-            return userService.getCoffeeById(coffee_id);
+            return coffeeService.getCoffeeById(coffee_id);
         }catch(DataAccessException e){
             throw new SalesServiceException("Failed to fetch the least sold coffe in the table.");
         }

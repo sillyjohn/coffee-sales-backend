@@ -1,7 +1,7 @@
 package com.coffee_sales.backend.controller;
 
 import com.coffee_sales.backend.entity.Coffee;
-import com.coffee_sales.backend.service.UserService;
+import com.coffee_sales.backend.service.CoffeeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.mockito.Mockito;
@@ -18,20 +18,19 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//TODO: FINISH USERCONTROLLER UNIT TEST
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
-    private UserService userService;
+    private CoffeeService coffeeService;
 
     @Test
     @WithMockUser(username = "coffee", password = "coffee123")
     void getAllCoffeeTest() throws Exception{
         Coffee coffee = new Coffee(1, "Espresso", new BigDecimal("5.00"));
 
-        Mockito.when(userService.getAllCoffee()).thenReturn(List.of(coffee));
+        Mockito.when(coffeeService.getAllCoffee()).thenReturn(List.of(coffee));
 
         mockMvc.perform(get("/api/coffeelist")).andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Espresso")));
@@ -42,7 +41,7 @@ public class UserControllerTest {
     void getCoffeeById() throws Exception{
         Coffee coffee = new Coffee(1, "Espresso", new BigDecimal("5.00"));
 
-        Mockito.when(userService.getCoffeeById(1)).thenReturn(coffee);
+        Mockito.when(coffeeService.getCoffeeById(1)).thenReturn(coffee);
 
         mockMvc.perform(get("/api/coffeelist/1")).andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Espresso")));
@@ -53,7 +52,7 @@ public class UserControllerTest {
     void addCoffeeTest() throws Exception{
         Coffee coffee = new Coffee(1, "Latte", new BigDecimal(4.5));
         String coffeeJson = "{\"id\":1,\"name\":\"Latte\",\"price\":4.50}";
-        Mockito.when(userService.addCoffee(Mockito.any(Coffee.class))).thenReturn(coffee);
+        Mockito.when(coffeeService.addCoffee(Mockito.any(Coffee.class))).thenReturn(coffee);
         mockMvc.perform(post("/api/coffeelist/addcoffee")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(coffeeJson)
