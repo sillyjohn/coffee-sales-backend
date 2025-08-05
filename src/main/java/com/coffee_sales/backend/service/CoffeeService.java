@@ -13,6 +13,7 @@ public class CoffeeService {
     @Autowired
     private CoffeeRepo coffeeRepo;
 
+
     public List<Coffee> getAllCoffee(){
         try{
             return coffeeRepo.findAll();

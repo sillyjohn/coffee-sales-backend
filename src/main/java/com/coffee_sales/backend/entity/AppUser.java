@@ -4,8 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +20,13 @@ public class AppUser {
     @NotNull
     private String name;
     @NotNull
+    @Column(unique = true)
     private String username;
     @NotNull
     private String password;
     private long phoneNumber;
     @NotNull
+    @Column(unique = true)
     private String email;
     @NotNull
     private String role;

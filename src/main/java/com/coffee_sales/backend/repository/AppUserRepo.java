@@ -27,4 +27,6 @@ public interface AppUserRepo extends JpaRepository<AppUser,Integer> {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    long deleteByEmail(String email);
 }

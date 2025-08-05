@@ -55,9 +55,39 @@ public class AuthenticationService {
         }
     }
 
-    //TODO: login WIP
-    public String login(@Valid AuthRequest authRequest) {
+    public void removeAppUserByAppUser(AppUser appUser){
+        if(appUser.getId() == null &&!appUserRepo.existsById(appUser.getId())){
+            throw new AuthenticationServiceException("AppUser does not exists.");
+        }
 
+        if(appUser.getEmail() == null && !appUserRepo.existsByEmail(appUser.getEmail())){
+            throw new AuthenticationServiceException("AppUser does not exists.");
+        }
+
+        try{
+            if(appUser.getId() != null){
+                appUserRepo.deleteById(appUser.getId());
+            }else if(appUser.getEmail() != null){
+                appUserRepo.deleteByEmail(appUser.getEmail());
+            }
+        }catch(Exception e){
+            throw new AuthenticationServiceException("Failed to delete appuser from database.");
+        }
+    }
+
+    public void removeAppUserById(Integer id) {
+        if(!appUserRepo.existsById(id)){
+            throw new AuthenticationServiceException("AppUser does not exists.");
+        }
+
+        try{
+            appUserRepo.deleteById(id);
+        }catch(Exception e){
+            throw new AuthenticationServiceException("Failed to remove delete appuser from the database.");
+        }
+    }
+
+    public String login(@Valid AuthRequest authRequest) {
         if(!appUserRepo.existsByUsername(authRequest.getUsername())){
             throw new AuthenticationServiceException("Username not found.");
         }
@@ -80,9 +110,6 @@ public class AuthenticationService {
         }
 
     }
-
-
-
 
 
 }

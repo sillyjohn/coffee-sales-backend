@@ -7,6 +7,7 @@ import com.coffee_sales.backend.service.AppUserService;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class AppUserController {
     private AppUserService appUserService;
 
     @GetMapping("/useridlist")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUserId(){
         try{
             List<Integer> list = appUserService.getUserIdList();
@@ -29,6 +31,7 @@ public class AppUserController {
     }
 
     @GetMapping("/userlist")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUser(){
         try{
             List<AppUser> list = appUserService.getUserList();
@@ -39,6 +42,7 @@ public class AppUserController {
     }
 
     @GetMapping("/useridlist/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<?> getUserById(@PathVariable @Positive Integer id){
         try{
             AppUser user = appUserService.findUserById(id);
@@ -51,6 +55,7 @@ public class AppUserController {
     }
 
     @GetMapping("/count")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUserCount(){
         try{
             Integer count = appUserService.countUser();
@@ -61,6 +66,7 @@ public class AppUserController {
     }
 
     @GetMapping("/usersales/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<?> getUserSalesById(@PathVariable @Positive Integer id){
         try {
             List<Sales> list = appUserService.getSalesByUserId(id);

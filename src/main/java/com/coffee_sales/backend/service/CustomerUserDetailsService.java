@@ -30,7 +30,7 @@ public class CustomerUserDetailsService implements UserDetailsService {
                 .User
                 .withUsername(appUser.getUsername())
                 .password(appUser.getPassword())
-                .roles("USER")
+                .roles(appUser.getRole().replace("ROLE_", ""))
                 .build();
     }
 }

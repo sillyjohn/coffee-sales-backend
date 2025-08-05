@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,6 +26,8 @@ public class SecurityConfig {
     private CustomerUserDetailsService customerUserDetailsService;
     @Autowired
     private AuthTokenFilter jwtFilter;
+    @Autowired
+    AuthenticationEntryPoint unauthorizedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -39,6 +42,10 @@ public class SecurityConfig {
                 //Stateless Session
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                //Handle unauthorized access
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
                 )
                 .authenticationProvider(authenticationProvider())
                 //Disables CSRF protection

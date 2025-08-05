@@ -2,6 +2,8 @@ package com.coffee_sales.backend.controller;
 
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.service.CoffeeService;
+import com.coffee_sales.backend.service.CustomerUserDetailsService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.mockito.Mockito;
@@ -19,14 +21,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+public class CoffeeControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
     private CoffeeService coffeeService;
 
+
     @Test
-    @WithMockUser(username = "coffee", password = "coffee123")
     void getAllCoffeeTest() throws Exception{
         Coffee coffee = new Coffee(1, "Espresso", new BigDecimal("5.00"));
 
@@ -58,8 +60,6 @@ public class UserControllerTest {
                         .content(coffeeJson)
                         .with(csrf()))
                 .andExpect(status().isCreated())
-                //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.jsonPath("Latte","Latte"));
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Latte")));
     }
 

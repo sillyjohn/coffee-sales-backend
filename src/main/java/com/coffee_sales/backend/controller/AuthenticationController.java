@@ -5,17 +5,18 @@ import com.coffee_sales.backend.entity.AuthRequest;
 import com.coffee_sales.backend.repository.AppUserRepo;
 import com.coffee_sales.backend.service.AuthenticationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthenticationController {
     @Autowired
     AuthenticationService authenticationService;
@@ -36,6 +37,28 @@ public class AuthenticationController {
             String token = authenticationService.login(authRequest);
             return ResponseEntity.ok().body(Map.of("token",token));
         }catch(Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?>deleteUserRecordByAppUser(@RequestBody @Valid AppUser appUser){
+        try{
+            authenticationService.removeAppUserByAppUser(appUser);
+            return ResponseEntity.ok(Map.of("message","AppUser record removed."));
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?>deleteUserRecordById(@PathVariable @Positive Integer id){
+        try{
+            authenticationService.removeAppUserById(id);
+            return ResponseEntity.ok(Map.of("message","AppUser record removed."));
+        }catch(Exception e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
         }
     }

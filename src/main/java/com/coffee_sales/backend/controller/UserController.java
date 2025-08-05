@@ -5,6 +5,7 @@ import com.coffee_sales.backend.service.CoffeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
@@ -16,6 +17,7 @@ public class UserController {
     private CoffeeService coffeeService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getCoffeeList(){
         try{
             List<Coffee> coffees = coffeeService.getAllCoffee();
@@ -26,6 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getCoffeeById(@PathVariable Integer id){
         try{
             Coffee coffee = coffeeService.getCoffeeById(id);
@@ -39,6 +42,7 @@ public class UserController {
     }
 
     @PostMapping("/addcoffee")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> addNewCoffee(@Valid @RequestBody Coffee coffee){
         try{
             Coffee saveCoffee = coffeeService.addCoffee(coffee);
@@ -51,6 +55,7 @@ public class UserController {
     }
 
     @DeleteMapping("/removecoffee")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> removeCoffee(@Valid @RequestBody Coffee coffee){
         try{
             coffeeService.removeCoffeeByCoffee(coffee);
@@ -64,6 +69,7 @@ public class UserController {
     }
 
     @DeleteMapping("/removecoffee/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> removeCoffeeById(@PathVariable Integer id){
         try{
             coffeeService.removeCoffeeById(id);

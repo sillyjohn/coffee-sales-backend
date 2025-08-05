@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.util.List;
 
+//TODO: refine the qurey, change to jpa method if possible
 @Repository
 public interface SalesRepo extends JpaRepository<Sales,Integer> {
     @Query("SELECT SUM(s.coffee.price) FROM Sales s")

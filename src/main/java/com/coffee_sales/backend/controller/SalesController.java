@@ -5,10 +5,12 @@ import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.entity.Sales;
 import com.coffee_sales.backend.exception.SalesServiceException;
 import com.coffee_sales.backend.service.SalesService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public class SalesController {
     private SalesService salesService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllSalesRecord(){
         try{
             List<Sales> salesList = salesService.getAllSalesRecord();
@@ -32,6 +35,7 @@ public class SalesController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getSalesRecordById(@PathVariable @Positive Integer id){
         try{
             Sales sales = salesService.getSalesRecordById(id);
@@ -44,6 +48,7 @@ public class SalesController {
     }
 
     @GetMapping("/salescount")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getSalesCount(){
         try{
             Integer count = salesService.findTotalSalesCount();
@@ -54,6 +59,7 @@ public class SalesController {
     }
 
     @GetMapping("/salescount/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getSalesCountById(@PathVariable @Positive Integer id){
         try{
             Integer count = salesService.findTotalSalesCountBySalesId(id);
@@ -65,7 +71,9 @@ public class SalesController {
         }
     }
 
+    @Transactional
     @PostMapping("/createnewsales")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<?> createNewSales(@Valid @RequestBody Coffee coffee, @Valid @RequestBody AppUser appUser){
         try{
             Sales createdSale = salesService.createSalesEntity(coffee,appUser);
@@ -77,18 +85,33 @@ public class SalesController {
         }
     }
 
+    @Transactional
     @PostMapping("/addsales")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> addSale(@Valid @RequestBody Sales sales){
         try{
             Sales addedSales = salesService.addSales(sales);
-            return ResponseEntity.ok().body(Map.of("message","Sales added into the Sales table."));
+            return ResponseEntity.status(201).body(Map.of("message","Sales added into the Sales table."));
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
         }catch(SalesServiceException e){
             return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
         }
     }
-    //TODO: removesalse
+
+    @Transactional
+    @DeleteMapping("/removesales")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> removeSales(@PathVariable @Positive Integer id){
+        try{
+            salesService.removeSalesById(id);
+            return ResponseEntity.ok(Map.of("message","sales "+id+" removed successfully."));
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }catch(SalesServiceException e){
+            return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
+        }
+    }
     //TODO: findmostsold
     //TODO: findleastsold
 
