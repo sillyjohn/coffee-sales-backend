@@ -21,6 +21,7 @@ public class AuthenticationController {
     @Autowired
     AuthenticationService authenticationService;
 
+    //Public Endpoint
     @PostMapping("/register")
     public ResponseEntity<?>register(@RequestBody @Valid AppUser appUser){
         try{
@@ -31,6 +32,7 @@ public class AuthenticationController {
         }
     }
 
+    //Public Endpoint
     @PostMapping("/login")
     public ResponseEntity<?>login(@RequestBody @Valid AuthRequest authRequest){
         try{

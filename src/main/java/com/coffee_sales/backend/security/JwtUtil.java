@@ -19,6 +19,9 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long EXPIRATION;
 
+    @Value("${jwt.admin_expiration}")
+    private long ADMIN_EXPIRATION;
+
     private SecretKey SECRET_KEY;
 
     @PostConstruct
@@ -35,6 +38,17 @@ public class JwtUtil {
                     .notBefore(new Date())
                     .signWith(SECRET_KEY)
                     .compact();
+    }
+
+    public String generateAdminToken(String username) {
+        return Jwts.builder()
+                .subject(username)
+                .issuer("CoffeeBackend-admin")
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + ADMIN_EXPIRATION))
+                .notBefore(new Date())
+                .signWith(SECRET_KEY)
+                .compact();
     }
 
     //TODO: JWT Validate Token
@@ -75,6 +89,7 @@ public class JwtUtil {
         }
     }
 
+
     //TODO: JWT check issuer
     //TODO: JWT check notbefore
 
@@ -87,4 +102,6 @@ public class JwtUtil {
                 .getPayload()
                 .getSubject();
     }
+
+
 }

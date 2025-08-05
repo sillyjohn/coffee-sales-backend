@@ -100,7 +100,9 @@ public class AuthenticationService {
                     )
             );
 
-            if(authentication.isAuthenticated()){
+            if(authentication.isAuthenticated() && isAdmin(authentication) ){
+                return jwtUtil.generateAdminToken(authRequest.getUsername());
+            }else if(authentication.isAuthenticated()){
                 return jwtUtil.generateToken(authRequest.getUsername());
             }else{
                 throw new AuthenticationServiceException("Authentication Failed");
@@ -109,6 +111,10 @@ public class AuthenticationService {
             throw new AuthenticationServiceException("Invalid username or password.");
         }
 
+    }
+
+    private boolean isAdmin(Authentication authentication){
+        return authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
 
 

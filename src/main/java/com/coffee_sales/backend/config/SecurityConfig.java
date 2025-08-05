@@ -1,5 +1,6 @@
 package com.coffee_sales.backend.config;
 import com.coffee_sales.backend.security.AuthTokenFilter;
+import com.coffee_sales.backend.security.JwtAccessDeniedHandler;
 import com.coffee_sales.backend.service.CustomerUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //TODO: Modify securityfilterchain and redirect user to login page in both mobile and web when not logged in / authenticated
 //TODO: Allow user to user basic service as a guest...Maybe?
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     @Autowired
     private CustomerUserDetailsService customerUserDetailsService;
@@ -28,6 +31,8 @@ public class SecurityConfig {
     private AuthTokenFilter jwtFilter;
     @Autowired
     AuthenticationEntryPoint unauthorizedHandler;
+    @Autowired
+    JwtAccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -46,6 +51,7 @@ public class SecurityConfig {
                 //Handle unauthorized access
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
+                                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .authenticationProvider(authenticationProvider())
                 //Disables CSRF protection
