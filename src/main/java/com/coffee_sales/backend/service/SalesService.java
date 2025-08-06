@@ -84,12 +84,12 @@ public class SalesService {
         }
     }
 
-    public Sales createSalesEntity(@NotNull Coffee coffee, @NotNull AppUser user) {
+    public Sales createSalesEntity(@NotNull Integer coffeeId, @NotNull Integer userId) {
         try {
             Sales sale = new Sales();
-            Coffee existCoffee = coffeeService.getCoffeeById(coffee.getId());
+            Coffee existCoffee = coffeeService.getCoffeeById(coffeeId);
             sale.setCoffee(existCoffee);
-            AppUser existUser = appUserService.findUserById(user.getId());
+            AppUser existUser = appUserService.findUserById(userId);
             sale.setAppUser(existUser);
             return addSales(sale);
         }catch(IllegalArgumentException e){

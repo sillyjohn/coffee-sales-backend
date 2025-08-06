@@ -1,5 +1,6 @@
 package com.coffee_sales.backend.controller;
 
+import com.coffee_sales.backend.dto.CreateSalesRequest;
 import com.coffee_sales.backend.entity.AppUser;
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.entity.Sales;
@@ -74,9 +75,11 @@ public class SalesController {
     @Transactional
     @PostMapping("/createnewsales")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<?> createNewSales(@Valid @RequestBody Coffee coffee, @Valid @RequestBody AppUser appUser){
+    public ResponseEntity<?> createNewSales(@Valid @RequestBody Map<String, Integer> ids){
         try{
-            Sales createdSale = salesService.createSalesEntity(coffee,appUser);
+            Integer coffeeId = ids.get("coffeeid");
+            Integer userId = ids.get("userid");
+            Sales createdSale = salesService.createSalesEntity(coffeeId,userId);
             return ResponseEntity.status(201).body("Created new sales "+createdSale.getId());
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));

@@ -93,6 +93,7 @@ public class AuthenticationService {
         }
 
         try{
+            //Create an Authentication Object
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(),
@@ -114,7 +115,9 @@ public class AuthenticationService {
     }
 
     private boolean isAdmin(Authentication authentication){
-        return authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        return authentication.getAuthorities()
+                             .stream()
+                             .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
 
 
