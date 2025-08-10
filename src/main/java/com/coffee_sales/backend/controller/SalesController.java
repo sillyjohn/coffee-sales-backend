@@ -1,8 +1,6 @@
 package com.coffee_sales.backend.controller;
 
-import com.coffee_sales.backend.dto.CreateSalesRequest;
-import com.coffee_sales.backend.entity.AppUser;
-import com.coffee_sales.backend.entity.Coffee;
+import com.coffee_sales.backend.dto.SalesRequest;
 import com.coffee_sales.backend.entity.Sales;
 import com.coffee_sales.backend.exception.SalesServiceException;
 import com.coffee_sales.backend.service.SalesService;
@@ -48,6 +46,19 @@ public class SalesController {
         }
     }
 
+    @GetMapping("/test/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<?> getSalesRecordTest(@PathVariable @Positive Integer id){
+        try{
+            Sales sales = salesService.getSalesRecordById(id);
+            return ResponseEntity.ok(sales);
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }catch(SalesServiceException e){
+            return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
+        }
+    }
+
     @GetMapping("/salescount")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getSalesCount(){
@@ -73,13 +84,26 @@ public class SalesController {
     }
 
     @Transactional
+    @PostMapping("/placeorder")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> placeOrder(@Valid @RequestBody SalesRequest salesRequest){
+        try{
+            if(!salesRequest.isAppUser() && !salesRequest.hasWalkInCustomerInfo()){
+                return ResponseEntity.badRequest().body(Map.of("error","Failed to place order: Userinfo not completed."));
+            }
+            Sales order = salesService.placeOrder(salesRequest);
+            return ResponseEntity.ok().body(Map.of("message","Order placed: order id:" + order.getId()));
+        }catch(SalesServiceException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
+
+    @Transactional
     @PostMapping("/createnewsales")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<?> createNewSales(@Valid @RequestBody Map<String, Integer> ids){
+    public ResponseEntity<?> createNewSales(@Valid @RequestBody SalesRequest salesRequest){
         try{
-            Integer coffeeId = ids.get("coffeeid");
-            Integer userId = ids.get("userid");
-            Sales createdSale = salesService.createSalesEntity(coffeeId,userId);
+            Sales createdSale = salesService.createSalesEntity(salesRequest);
             return ResponseEntity.status(201).body("Created new sales "+createdSale.getId());
         }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
@@ -115,7 +139,16 @@ public class SalesController {
             return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
         }
     }
-    //TODO: findmostsold
+
+    @Transactional
+    @GetMapping("/mostsold")
+    public ResponseEntity<?> mostSoldCoffee(){
+        try{
+            return ResponseEntity.ok(salesService.findMostSoldCoffee());
+        }catch(SalesServiceException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
     //TODO: findleastsold
 
 

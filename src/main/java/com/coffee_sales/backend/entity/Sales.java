@@ -1,6 +1,8 @@
 package com.coffee_sales.backend.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,8 +22,20 @@ public class Sales {
     @JoinColumn(name = "coffee_id", nullable = false)
     private Coffee coffee;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @Nullable
+    @JoinColumn(name = "user_id")
     AppUser appUser;
+
+    //Fields for walk-in customers
+    @Column(name = "customer_name")
+    private String customerName;
+
+    @Column(name = "customer_phone")
+    private Long customerPhone;
+
+    @Column(name = "customer_email")
+    private String customerEmail;
+
     @Column(name = "sales_date", nullable = false)
     private LocalDateTime salesDate;
 

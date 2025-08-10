@@ -1,4 +1,5 @@
 package com.coffee_sales.backend.service;
+import com.coffee_sales.backend.dto.SalesRequest;
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.entity.Sales;
 import com.coffee_sales.backend.entity.AppUser;
@@ -84,14 +85,41 @@ public class SalesService {
         }
     }
 
-    public Sales createSalesEntity(@NotNull Integer coffeeId, @NotNull Integer userId) {
+    public Sales placeOrder(SalesRequest salesRequest){
+        try{
+            Sales sales = new Sales();
+            Coffee coffee = coffeeService.getCoffeeById(salesRequest.getCoffeeId());
+            sales.setCoffee(coffee);
+            if(salesRequest.isAppUser()){
+                AppUser appUser = appUserService.findUserById(salesRequest.getAppUserId());
+                sales.setAppUser(appUser);
+            }else{
+                sales.setCustomerName(salesRequest.getCustomerName());
+                sales.setCustomerPhone(salesRequest.getCustomerPhone());
+                sales.setCustomerEmail(salesRequest.getCustomerEmail());
+            }
+            return addSales(sales);
+        }catch(Exception e){
+            throw new SalesServiceException("Failed to place order: "+e.getMessage());
+        }
+    }
+
+    public Sales createSalesEntity(SalesRequest salesRequest) {
         try {
-            Sales sale = new Sales();
-            Coffee existCoffee = coffeeService.getCoffeeById(coffeeId);
-            sale.setCoffee(existCoffee);
-            AppUser existUser = appUserService.findUserById(userId);
-            sale.setAppUser(existUser);
-            return addSales(sale);
+            Sales sales = new Sales();
+            Coffee coffee = coffeeService.getCoffeeById(salesRequest.getCoffeeId());
+            sales.setCoffee(coffee);
+            if(salesRequest.isAppUser()){
+                AppUser appUser = appUserService.findUserById(salesRequest.getAppUserId());
+                sales.setAppUser(appUser);
+                return addSales(sales);
+            }else{
+                sales.setAppUser(null);
+                sales.setCustomerName(salesRequest.getCustomerName());
+                sales.setCustomerPhone(salesRequest.getCustomerPhone());
+                sales.setCustomerEmail(salesRequest.getCustomerEmail());
+                return addSales(sales);
+            }
         }catch(IllegalArgumentException e){
             throw new IllegalArgumentException("Create Sales Entity:"+e.getMessage());
         }catch(CoffeeServiceException e){
@@ -100,11 +128,11 @@ public class SalesService {
             throw new SalesServiceException("Create Sales Entity: Failed to find user");
         }
     }
-    public Sales addSales(@NotNull Sales sales){
+    public Sales addSales(Sales sales){
         if(sales.getCoffee() == null){
             throw new IllegalArgumentException("Coffee cannot be null.");
         }
-        if(sales.getAppUser() == null){
+        if(sales.getAppUser() == null && sales.getCustomerName() == null){
             throw new IllegalArgumentException("User cannot be null.");
         }
 
@@ -144,7 +172,4 @@ public class SalesService {
         }
     }
     //TODO: find user with most purchase
-
-
-
 }

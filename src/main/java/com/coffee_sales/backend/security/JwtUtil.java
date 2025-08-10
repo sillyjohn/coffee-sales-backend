@@ -1,15 +1,19 @@
 package com.coffee_sales.backend.security;
+import com.coffee_sales.backend.entity.AppUser;
 import com.coffee_sales.backend.exception.JwtUtilException;
+import com.coffee_sales.backend.repository.AppUserRepo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -24,14 +28,19 @@ public class JwtUtil {
 
     private SecretKey SECRET_KEY;
 
+    @Autowired
+    private AppUserRepo appUserRepo;
     @PostConstruct
     public void init(){
         this.SECRET_KEY = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String username){
+        AppUser user = appUserRepo.findByUsername(username);
         return Jwts.builder()
                     .subject(username)
+                    .claims(Map.of("userid",user.getId()))
+                    .claims(Map.of("role","ADMIN"))
                     .issuer("CoffeeBackend")
                     .issuedAt(new Date())
                     .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
@@ -43,6 +52,7 @@ public class JwtUtil {
     public String generateAdminToken(String username) {
         return Jwts.builder()
                 .subject(username)
+                .claims(Map.of("Role","ADMIN"))
                 .issuer("CoffeeBackend-admin")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + ADMIN_EXPIRATION))
@@ -51,7 +61,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    //TODO: JWT Validate Token
     public Boolean validateToken(String token){
         try{
             Jwts.parser()
@@ -72,10 +81,8 @@ public class JwtUtil {
         }
     }
 
-    //TODO: JWT check expired token
     public boolean isTokenExpired(String token){
         try {
-
             Claims claims= Jwts.parser()
                                   .verifyWith(SECRET_KEY)
                                   .build()
@@ -89,9 +96,17 @@ public class JwtUtil {
         }
     }
 
+    private Claims extractAllClaims(String token){
+        return Jwts.parser()
+                   .verifyWith(SECRET_KEY)
+                   .build()
+                   .parseSignedClaims(token)
+                   .getPayload();
+    }
 
-    //TODO: JWT check issuer
-    //TODO: JWT check notbefore
+    public String extractAppUserId(String token){
+        return extractAllClaims(token).get("appUserId",String.class);
+    }
 
     //TODO: JWT find username
     public String getUsernameFromToken(String token){
@@ -102,6 +117,8 @@ public class JwtUtil {
                 .getPayload()
                 .getSubject();
     }
+
+
 
 
 }

@@ -41,6 +41,7 @@ public class SecurityConfig {
                         auth
                             //Public Endpoint
                             .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/api/sales/**").permitAll()
                             //Private Endpoint
                             .anyRequest().authenticated()
                 )

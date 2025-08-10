@@ -119,6 +119,4 @@ public class AuthenticationService {
                              .stream()
                              .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
-
-
 }
