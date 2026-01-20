@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
     @Autowired
     AuthenticationService authenticationService;
@@ -36,8 +37,10 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?>login(@RequestBody @Valid AuthRequest authRequest){
         try{
+            HttpHeaders headers = new HttpHeaders();
+//            headers.set("Access-Control-Allow-Credentials", "true");
             String token = authenticationService.login(authRequest);
-            return ResponseEntity.ok().body(Map.of("token",token));
+            return ResponseEntity.ok().headers(headers).body(Map.of("token",token));
         }catch(Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
         }

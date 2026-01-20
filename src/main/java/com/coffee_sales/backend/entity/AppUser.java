@@ -1,4 +1,5 @@
 package com.coffee_sales.backend.entity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,6 @@ public class AppUser {
     @Column(name = "Date of Birth", nullable = false)
     private LocalDate dateOfBirth;
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Sales> salesList = new ArrayList<>();
 }

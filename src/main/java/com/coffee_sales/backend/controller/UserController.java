@@ -4,6 +4,7 @@ import com.coffee_sales.backend.exception.CoffeeServiceException;
 import com.coffee_sales.backend.service.CoffeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,17 +12,20 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/coffeelist")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class UserController {
     @Autowired
     private CoffeeService coffeeService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    //@PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getCoffeeList(){
         try{
             List<Coffee> coffees = coffeeService.getAllCoffee();
-            return ResponseEntity.ok(coffees);
+            HttpHeaders headers = new HttpHeaders();
+            //headers.set("Access-Control-Allow-Origin", "http://localhost:5173");
+            //headers.set("Access-Control-Allow-Credentials", "true");
+            return ResponseEntity.ok().headers(headers).body(coffees);
         }catch(CoffeeServiceException e){
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }

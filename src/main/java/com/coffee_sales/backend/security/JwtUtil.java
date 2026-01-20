@@ -39,8 +39,10 @@ public class JwtUtil {
         AppUser user = appUserRepo.findByUsername(username);
         return Jwts.builder()
                     .subject(username)
-                    .claims(Map.of("userid",user.getId()))
-                    .claims(Map.of("role","ADMIN"))
+                    .claims(Map.of(
+                            "userid",user.getId(),
+                            "role","USER")
+                    )
                     .issuer("CoffeeBackend")
                     .issuedAt(new Date())
                     .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
@@ -50,9 +52,12 @@ public class JwtUtil {
     }
 
     public String generateAdminToken(String username) {
+        AppUser user = appUserRepo.findByUsername(username);
         return Jwts.builder()
                 .subject(username)
-                .claims(Map.of("Role","ADMIN"))
+                .claims(Map.of(
+                        "userid",user.getId(),
+                        "role","ADMIN"))
                 .issuer("CoffeeBackend-admin")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + ADMIN_EXPIRATION))
@@ -101,11 +106,12 @@ public class JwtUtil {
                    .verifyWith(SECRET_KEY)
                    .build()
                    .parseSignedClaims(token)
-                   .getPayload();
+                   .getPayload()
+                ;
     }
 
-    public String extractAppUserId(String token){
-        return extractAllClaims(token).get("appUserId",String.class);
+    public Integer extractAppUserId(String token){
+        return extractAllClaims(token).get("userid",Integer.class);
     }
 
     //TODO: JWT find username

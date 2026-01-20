@@ -1,5 +1,6 @@
 package com.coffee_sales.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Null;
@@ -24,6 +25,7 @@ public class Sales {
     @ManyToOne
     @Nullable
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     AppUser appUser;
 
     //Fields for walk-in customers

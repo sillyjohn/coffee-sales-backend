@@ -33,6 +33,23 @@ jwt.expiration=3600000
 
 ```
 
+## Rabbitmq guide
+Install rabbitmq:
+```commandline
+brew install rabbitmq
+```
+Run this line to start a foreground service:
+
+```
+CONF_ENV_FILE="/opt/homebrew/etc/rabbitmq/rabbitmq-env.conf" /opt/homebrew/opt/rabbitmq/sbin/rabbitmq-server
+
+```
+Running it foreground can help with debugging.
+if u want to run it in the background use the following line:
+```commandline
+brew services start rabbitmq
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first

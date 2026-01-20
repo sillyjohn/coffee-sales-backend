@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
-
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
@@ -32,20 +31,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             String header = request.getHeader("Authorization");
             String token = null;
             String username = null;
+            Integer userid = null;
 
             //Parse token
             if (header != null && header.startsWith("Bearer ")) {
                 token = header.substring(7);
+                System.out.println("Token received: " + token);
             }
 
             //parse username & construct an UserDetails & Authentication object
-            if(token!= null && jwtUtil.validateToken(token)){
+            if(token!= null && jwtUtil.validateToken(token) && SecurityContextHolder.getContext().getAuthentication() == null){
                 username = jwtUtil.getUsernameFromToken(token);
+                userid = jwtUtil.extractAppUserId(token);
+
                 UserDetails userDetails = customerUserDetailsService.loadUserByUsername(username);
+                JwtPrincipal principal = new JwtPrincipal(userid,username);
                 //Authentication Object Construction
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                userDetails,
+                                principal,
                                 null,
                                 userDetails.getAuthorities()
                         );
