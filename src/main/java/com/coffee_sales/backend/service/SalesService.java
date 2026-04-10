@@ -1,7 +1,9 @@
 package com.coffee_sales.backend.service;
+import com.coffee_sales.backend.dto.SalesRequest;
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.entity.Sales;
 import com.coffee_sales.backend.entity.AppUser;
+import com.coffee_sales.backend.exception.AppUserServiceException;
 import com.coffee_sales.backend.exception.CoffeeServiceException;
 import com.coffee_sales.backend.exception.SalesServiceException;
 import com.coffee_sales.backend.repository.AppUserRepo;
@@ -10,7 +12,6 @@ import com.coffee_sales.backend.repository.SalesRepo;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,7 +25,9 @@ public class SalesService {
     @Autowired
     private AppUserRepo appUserRepo;
     @Autowired
-    private UserService userService;
+    private CoffeeService coffeeService;
+    @Autowired
+    private AppUserService appUserService;
 
     public List<Sales> getAllSalesRecord(){
         try{
@@ -40,7 +43,7 @@ public class SalesService {
         }
         try{
             return salesRepo.findById(id)
-                    .orElseThrow(()-> new SalesServiceException("Sales with ID "+ id + "not found."));
+                    .orElseThrow(()-> new SalesServiceException("Sales with ID " + id + "not found."));
         }catch(DataAccessException e){
             throw new SalesServiceException("Failed to fetch sales record by id.");
         }
@@ -82,26 +85,54 @@ public class SalesService {
         }
     }
 
-    public Sales createSalesEntity(@NotNull Coffee coffee, @NotNull AppUser user) {
+    public Sales placeOrder(SalesRequest salesRequest){
+        try{
+            Sales sales = new Sales();
+            Coffee coffee = coffeeService.getCoffeeById(salesRequest.getCoffeeId());
+            sales.setCoffee(coffee);
+            if(salesRequest.isAppUser()){
+                AppUser appUser = appUserService.findUserById(salesRequest.getAppUserId());
+                sales.setAppUser(appUser);
+            }else{
+                sales.setCustomerName(salesRequest.getCustomerName());
+                sales.setCustomerPhone(salesRequest.getCustomerPhone());
+                sales.setCustomerEmail(salesRequest.getCustomerEmail());
+            }
+            return addSales(sales);
+        }catch(Exception e){
+            throw new SalesServiceException("Failed to place order: "+e.getMessage());
+        }
+    }
+
+    public Sales createSalesEntity(SalesRequest salesRequest) {
         try {
-            Sales sale = new Sales();
-            Coffee existCoffee = userService.getCoffeeById(coffee.getId());
-            sale.setCoffee(existCoffee);
-            //TODO: add user new user services for looking up user entity from db
-            sale.setAppUser(user);
-            return addSales(sale);
+            Sales sales = new Sales();
+            Coffee coffee = coffeeService.getCoffeeById(salesRequest.getCoffeeId());
+            sales.setCoffee(coffee);
+            if(salesRequest.isAppUser()){
+                AppUser appUser = appUserService.findUserById(salesRequest.getAppUserId());
+                sales.setAppUser(appUser);
+                return addSales(sales);
+            }else{
+                sales.setAppUser(null);
+                sales.setCustomerName(salesRequest.getCustomerName());
+                sales.setCustomerPhone(salesRequest.getCustomerPhone());
+                sales.setCustomerEmail(salesRequest.getCustomerEmail());
+                return addSales(sales);
+            }
         }catch(IllegalArgumentException e){
             throw new IllegalArgumentException("Create Sales Entity:"+e.getMessage());
         }catch(CoffeeServiceException e){
             throw new SalesServiceException("Create Sales Entity: Failed to find coffee.");
-        }//TODO: add catch() to catch exception from user related service
-
+        }catch(AppUserServiceException e){
+            throw new SalesServiceException("Create Sales Entity: Failed to find user");
+        }
     }
-    public Sales addSales(@NotNull Sales sales){
+    public Sales addSales(Sales sales){
         if(sales.getCoffee() == null){
             throw new IllegalArgumentException("Coffee cannot be null.");
         }
-        if(sales.getAppUser() == null){
+        if(sales.getAppUser() == null && sales.getCustomerName() == null){
             throw new IllegalArgumentException("User cannot be null.");
         }
 
@@ -111,7 +142,34 @@ public class SalesService {
             throw new SalesServiceException("Failed to insert new sales into the Sales table.");
         }
     }
-    //TODO: find most sold coffee
-    //TODO: find least sold coffee
+
+    public void removeSalesById(Integer id){
+        try{
+            if(!salesRepo.existsById(id)){
+                throw new SalesServiceException("Sales not found.");
+            }
+            salesRepo.deleteById(id);
+        }catch(DataAccessException e){
+            throw new SalesServiceException("Failed to remove sales "+id+" from the table.");
+        }
+    }
+
+    public Coffee findMostSoldCoffee(){
+        try{
+            Integer coffee_id = salesRepo.countMostSoldCoffeeId();
+            return coffeeService.getCoffeeById(coffee_id);
+        }catch(DataAccessException e){
+            throw new SalesServiceException("Failed to fetch the most sold coffee in table.");
+        }
+    }
+
+    public Coffee findLeastSoldCoffee(){
+        try{
+            Integer coffee_id = salesRepo.countLeastSoldCoffeeId();
+            return coffeeService.getCoffeeById(coffee_id);
+        }catch(DataAccessException e){
+            throw new SalesServiceException("Failed to fetch the least sold coffe in the table.");
+        }
+    }
     //TODO: find user with most purchase
 }

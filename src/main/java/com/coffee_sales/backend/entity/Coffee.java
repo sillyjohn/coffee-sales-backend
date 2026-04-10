@@ -7,11 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Data
 @Entity
 @Table(name = "coffee")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Coffee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +23,9 @@ public class Coffee {
     @Positive
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Categories category;
+    @Column(name = "category_name")
+    private String categoryName;
 }

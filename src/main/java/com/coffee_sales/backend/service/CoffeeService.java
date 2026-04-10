@@ -1,7 +1,10 @@
 package com.coffee_sales.backend.service;
+import com.coffee_sales.backend.entity.Categories;
 import com.coffee_sales.backend.entity.Coffee;
 import com.coffee_sales.backend.exception.CoffeeServiceException;
+import com.coffee_sales.backend.repository.CategoryRepo;
 import com.coffee_sales.backend.repository.CoffeeRepo;
+import jdk.jfr.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -9,9 +12,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class UserService {
+public class CoffeeService {
     @Autowired
     private CoffeeRepo coffeeRepo;
+    @Autowired
+    private CategoryRepo categoryRepo;
+
+
 
     public List<Coffee> getAllCoffee(){
         try{
@@ -31,6 +38,11 @@ public class UserService {
         }catch(DataAccessException e){
             throw new CoffeeServiceException("Failed to fetch coffee "+id+" by id.", e );
         }
+    }
+
+    public Coffee createCoffee(String name, BigDecimal price, Categories categories){
+
+        return new Coffee(null,name,price,categories,categories.getName());
     }
 
     public Coffee addCoffee(Coffee coffee){
@@ -78,5 +90,40 @@ public class UserService {
         }
     }
 
+    public Categories getCategory(String categoryName){
+        if(categoryRepo.existsByName(categoryName)){
+            return categoryRepo.findByName(categoryName);
+        }else{
+            //Create new Category
+            Categories newCat = new Categories(null,categoryName);
+            categoryRepo.save(newCat);
+            return categoryRepo.findByName(categoryName);
+        }
+    }
 
+    public Categories addCategory(String categoryName){
+        if(categoryRepo.existsByName(categoryName)){
+            throw new CoffeeServiceException("Category already exist.");
+        }
+        //Create new Category
+        Categories newCat = new Categories(null,categoryName);
+        categoryRepo.save(newCat);
+        return newCat;
+    }
+
+    public void removeCategory(Integer id){
+        if(categoryRepo.existsById(id)){
+            categoryRepo.deleteById(id);
+        }else{
+            throw new CoffeeServiceException("Failed to remove Category entry.");
+        }
+    }
+
+    public void modifyCategory(Integer id,String name){
+        if(categoryRepo.existsById(id)){
+            categoryRepo.updateById(id,name);
+        }else{
+            throw new CoffeeServiceException("Failed to modify Category entry.");
+        }
+    }
 }
