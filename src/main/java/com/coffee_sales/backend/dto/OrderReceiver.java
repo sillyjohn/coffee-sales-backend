@@ -3,7 +3,6 @@ package com.coffee_sales.backend.dto;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-@Component
 public class OrderReceiver {
 
     @RabbitListener(queues = "OrderQueue")

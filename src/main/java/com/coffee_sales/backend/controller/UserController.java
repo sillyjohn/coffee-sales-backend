@@ -45,45 +45,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/addcoffee")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addNewCoffee(@Valid @RequestBody Coffee coffee){
-        try{
-            Coffee saveCoffee = coffeeService.addCoffee(coffee);
-            return ResponseEntity.status(201).body(saveCoffee);
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }catch(CoffeeServiceException e){
-            return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
-        }
-    }
 
-    @DeleteMapping("/removecoffee")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> removeCoffee(@Valid @RequestBody Coffee coffee){
-        try{
-            coffeeService.removeCoffeeByCoffee(coffee);
-            return ResponseEntity.ok(Map.of("message","Coffee deleted successfully."));
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
-        }
-        catch(CoffeeServiceException e){
-            return ResponseEntity.status(400).body(Map.of("error:", e.getMessage()));
-        }
-    }
-
-    @DeleteMapping("/removecoffee/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> removeCoffeeById(@PathVariable Integer id){
-        try{
-            coffeeService.removeCoffeeById(id);
-            return ResponseEntity.ok(Map.of("message","Coffee deleted successfully."));
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
-        }catch(CoffeeServiceException e){
-            return ResponseEntity.status(400).body(Map.of("error", e.getMessage()));
-        }
-    }
 
 
 }

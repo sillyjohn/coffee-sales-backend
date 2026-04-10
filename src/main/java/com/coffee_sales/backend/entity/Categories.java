@@ -15,7 +15,7 @@ public class Categories {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @Column
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
 }

@@ -24,6 +24,8 @@ public class Coffee {
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
     @ManyToOne
-    @JoinColumn(name = "categories_name",nullable = true)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Categories category;
+    @Column(name = "category_name")
+    private String categoryName;
 }
