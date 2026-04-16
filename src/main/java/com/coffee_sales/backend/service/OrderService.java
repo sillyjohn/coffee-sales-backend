@@ -39,7 +39,7 @@ public class OrderService {
 
     @Transactional
     public Order updateOrderStatus_Finished(Integer orderid){
-        Order order = orderRepo.findByappUserID(orderid).orElseThrow();
+        Order order = orderRepo.findById(orderid).orElseThrow();
         order.setOrderStatus(OrderStatus.Finished);
         orderProducer.updateOrder_Finished(order);
         return order;
@@ -47,7 +47,7 @@ public class OrderService {
 
     @Transactional
     public Order updateOrderStatus_Cancelled(Integer orderid){
-        Order order = orderRepo.findByappUserID(orderid).orElseThrow();
+        Order order = orderRepo.findById(orderid).orElseThrow();
         order.setOrderStatus(OrderStatus.Cancelled);
         orderProducer.updateOrder_Cancelled(order);
         return order;

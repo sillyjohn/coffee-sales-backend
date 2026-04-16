@@ -51,7 +51,7 @@ public class AdminUserController {
         }
     }
 
-    @GetMapping("/count")
+    @GetMapping("/usercount")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUserCount(){
         try{

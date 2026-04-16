@@ -8,11 +8,12 @@ import com.coffee_sales.backend.entity.Order;
 import com.coffee_sales.backend.entity.OrderItem;
 import com.coffee_sales.backend.entity.OrderStatus;
 import com.coffee_sales.backend.exception.OrderServiceException;
-import com.coffee_sales.backend.service.AppUserService;
 import com.coffee_sales.backend.service.OrderService;
+import com.coffee_sales.backend.service.ServerSideEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,9 @@ public class UserOrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ServerSideEventService sseService;
 
     @GetMapping("/send")
     public String sendMsg() {
@@ -82,5 +86,10 @@ public class UserOrderController {
         } catch( NoSuchElementException e){
             return ResponseEntity.status(404).body(Map.of("error","User not found"));
         }
+    }
+
+    @GetMapping("/listenOrderUpdate/{customerId}")
+    public SseEmitter listenOrderUpdate(@PathVariable Integer customerId){
+        return sseService.establishConnection(customerId);
     }
 }
