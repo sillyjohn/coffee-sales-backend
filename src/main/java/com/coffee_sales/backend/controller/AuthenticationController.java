@@ -2,11 +2,9 @@ package com.coffee_sales.backend.controller;
 
 import com.coffee_sales.backend.entity.AppUser;
 import com.coffee_sales.backend.entity.AuthRequest;
-import com.coffee_sales.backend.repository.AppUserRepo;
 import com.coffee_sales.backend.service.AuthenticationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

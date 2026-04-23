@@ -51,7 +51,7 @@ public class SecurityConfig {
                             .requestMatchers("/api/auth/**").permitAll()
                             .requestMatchers("/api/sales/**").permitAll()
                             .requestMatchers("/api/coffeelist").permitAll()
-                            .requestMatchers("/api/order/**").permitAll()
+                            .requestMatchers("/api/order/**").authenticated()
                             //Private Endpoint
                             .anyRequest().authenticated()
                 )

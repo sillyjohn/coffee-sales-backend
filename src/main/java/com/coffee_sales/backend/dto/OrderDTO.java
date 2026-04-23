@@ -15,6 +15,6 @@ import java.util.List;
 public class OrderDTO {
     @JsonProperty("items")
     private List<OrderItem> items;
-    @JsonProperty("customer_id")
-    private Integer customerId;
+//    @JsonProperty("customer_id")
+//    private Integer customerId;
 }
