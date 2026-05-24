@@ -20,32 +20,17 @@ public class UserController {
     @GetMapping
     //@PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getCoffeeList(){
-        try{
-            List<Coffee> coffees = coffeeService.getAllCoffee();
-            HttpHeaders headers = new HttpHeaders();
-            //headers.set("Access-Control-Allow-Origin", "http://localhost:5173");
-            //headers.set("Access-Control-Allow-Credentials", "true");
-            return ResponseEntity.ok().headers(headers).body(coffees);
-        }catch(CoffeeServiceException e){
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
-        }
+        List<Coffee> coffees = coffeeService.getAllCoffee();
+        HttpHeaders headers = new HttpHeaders();
+        //headers.set("Access-Control-Allow-Origin", "http://localhost:5173");
+        //headers.set("Access-Control-Allow-Credentials", "true");
+        return ResponseEntity.ok().headers(headers).body(coffees);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getCoffeeById(@PathVariable Integer id){
-        try{
-            Coffee coffee = coffeeService.getCoffeeById(id);
-            return ResponseEntity.ok(coffee);
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }catch(CoffeeServiceException e){
-            return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
-        }
-
+        Coffee coffee = coffeeService.getCoffeeById(id);
+        return ResponseEntity.ok(coffee);
     }
-
-
-
-
 }

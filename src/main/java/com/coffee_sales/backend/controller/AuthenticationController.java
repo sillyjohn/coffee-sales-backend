@@ -1,5 +1,6 @@
 package com.coffee_sales.backend.controller;
 
+import com.coffee_sales.backend.dto.RegisterDTO;
 import com.coffee_sales.backend.entity.AppUser;
 import com.coffee_sales.backend.entity.AuthRequest;
 import com.coffee_sales.backend.service.AuthenticationService;
@@ -22,9 +23,9 @@ public class AuthenticationController {
 
     //Public Endpoint
     @PostMapping("/register")
-    public ResponseEntity<?>register(@RequestBody @Valid AppUser appUser){
+    public ResponseEntity<?>register(@RequestBody @Valid RegisterDTO registerDTO){
         try{
-            AppUser addedUser = authenticationService.registerAppUser(appUser);
+            AppUser addedUser = authenticationService.registerAppUser(registerDTO);
             return ResponseEntity.ok(addedUser);
         }catch(Exception e){
             return  ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));

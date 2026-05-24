@@ -24,28 +24,19 @@ public class AppUserController {
     @GetMapping("")
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<?> getUser(@AuthenticationPrincipal JwtPrincipal principal){
-        try{
+
             AppUser user = appUserService.findUserById(principal.userid());
             return ResponseEntity.ok(user);
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
-        }catch(AppUserServiceException e){
-            return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
-        }
+
     }
 
-    @GetMapping("/salesrecord/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<?> getUserSales(@PathVariable @Positive Integer id){
-        try {
-            List<Sales> list = appUserService.getSalesByUserId(id);
-            return ResponseEntity.ok(list);
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
-        }catch(AppUserServiceException e){
-            return ResponseEntity.status(404).body(Map.of("error",e.getMessage()));
-        }
-    }
+    // @GetMapping("/salesrecord/{id}")
+    // @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    // public ResponseEntity<?> getUserSales(@PathVariable @Positive Integer id){
+  
+    //         List<Sales> list = appUserService.getSalesByUserId(id);
+    //         return ResponseEntity.ok(list);
+    // }
 
 
 }
