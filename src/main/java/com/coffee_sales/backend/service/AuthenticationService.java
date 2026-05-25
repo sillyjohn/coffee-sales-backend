@@ -98,27 +98,21 @@ public class AuthenticationService {
     }
 
     public String login(@Valid AuthRequest authRequest) {
-
-        // Create an Authentication Object
-        Authentication authentication = null;
         try {
-            authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(),
                             authRequest.getPassword()));
+
+            return isAdmin(authentication)
+                    ? jwtUtil.generateAdminToken(authRequest.getUsername())
+                    : jwtUtil.generateToken(authRequest.getUsername());
         } catch (AuthenticationException e) {
-            throw new AuthenticationServiceException("Login Failed: Invalid username or password", HttpStatus.UNAUTHORIZED, e);
+            throw new AuthenticationServiceException(
+                    "Invalid username or password.",
+                    HttpStatus.UNAUTHORIZED,
+                    e);
         }
-
-        // Authentication Successful
-        if (authentication.isAuthenticated() && isAdmin(authentication)) {
-            return jwtUtil.generateAdminToken(authRequest.getUsername());
-        } else if (authentication.isAuthenticated()) {
-            return jwtUtil.generateToken(authRequest.getUsername());
-        }
-
-        // Default throw
-        throw new AuthenticationServiceException("Login Failed");
     }
 
     private boolean isAdmin(Authentication authentication) {

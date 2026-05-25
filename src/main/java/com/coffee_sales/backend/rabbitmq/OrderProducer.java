@@ -1,4 +1,4 @@
-package com.coffee_sales.backend.dto;
+package com.coffee_sales.backend.rabbitmq;
 
 import com.coffee_sales.backend.entity.Order;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,7 +8,9 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderProducer {
     @Autowired
     private RabbitTemplate rabbitTemplate;

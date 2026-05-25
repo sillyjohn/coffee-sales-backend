@@ -23,6 +23,7 @@ public class AdminOrderController {
     @Autowired
     private OrderService orderService;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/placeorder/{customerId}")
     public ResponseEntity<?> placeOrder(@PathVariable Integer customerId, @RequestBody OrderDTO orderDTO){
         List<OrderItem> items = orderDTO.getItems();

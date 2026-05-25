@@ -1,7 +1,7 @@
 package com.coffee_sales.backend.controller;
 
 import com.coffee_sales.backend.dto.OrderDTO;
-import com.coffee_sales.backend.dto.OrderProducer;
+import com.coffee_sales.backend.rabbitmq.OrderProducer;
 import com.coffee_sales.backend.entity.Order;
 import com.coffee_sales.backend.entity.OrderItem;
 import com.coffee_sales.backend.security.JwtPrincipal;

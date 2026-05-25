@@ -1,23 +1,18 @@
 package com.coffee_sales.backend.controller;
 
 import com.coffee_sales.backend.entity.AppUser;
-import com.coffee_sales.backend.entity.Sales;
-import com.coffee_sales.backend.exception.AppUserServiceException;
 import com.coffee_sales.backend.security.JwtPrincipal;
 import com.coffee_sales.backend.service.AppUserService;
-import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/appuser")
 @CrossOrigin("*")
-public class AppUserController {
+public class AppUserRecordController {
     @Autowired
     private AppUserService appUserService;
 

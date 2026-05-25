@@ -1,6 +1,6 @@
 package com.coffee_sales.backend.service;
 
-import com.coffee_sales.backend.dto.OrderProducer;
+import com.coffee_sales.backend.rabbitmq.OrderProducer;
 import com.coffee_sales.backend.entity.*;
 import com.coffee_sales.backend.exception.OrderServiceException;
 import com.coffee_sales.backend.repository.OrderRepo;

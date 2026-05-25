@@ -1,7 +1,5 @@
 package com.coffee_sales.backend.config;
 
-import com.coffee_sales.backend.dto.OrderProducer;
-import com.coffee_sales.backend.dto.OrderReceiver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.amqp.core.*;
@@ -53,13 +51,13 @@ public class OrderQueueConfig {
                 .with("Order.Cancelled");
     }
 
-    @Bean
-    public OrderProducer orderSender(){
-        return new OrderProducer();
-    }
+    // @Bean
+    // public OrderProducer orderSender(){
+    //     return new OrderProducer();
+    // }
 
-    @Bean
-    public OrderReceiver orderReceiver(){
-        return new OrderReceiver();
-    }
+    // @Bean
+    // public OrderReceiver orderReceiver(){
+    //     return new OrderReceiver();
+    // }
 }
