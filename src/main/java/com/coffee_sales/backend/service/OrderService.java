@@ -1,10 +1,12 @@
 package com.coffee_sales.backend.service;
 
-import com.coffee_sales.backend.dto.OrderProducer;
+import com.coffee_sales.backend.rabbitmq.OrderProducer;
 import com.coffee_sales.backend.entity.*;
+import com.coffee_sales.backend.exception.OrderServiceException;
 import com.coffee_sales.backend.repository.OrderRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,7 +33,8 @@ public class OrderService {
 
     @Transactional
     public Order updateOrderStatus_InProgress(Integer orderid){
-        Order order = orderRepo.findById(orderid).orElseThrow();
+        Order order = orderRepo.findById(orderid)
+            .orElseThrow(() -> new OrderServiceException("Order"+ orderid + "not found", HttpStatus.NOT_FOUND));
         order.setOrderStatus(OrderStatus.In_Progress);
         orderProducer.updateOrder_InProgress(order);
         return order;
@@ -39,7 +42,8 @@ public class OrderService {
 
     @Transactional
     public Order updateOrderStatus_Finished(Integer orderid){
-        Order order = orderRepo.findByappUserID(orderid).orElseThrow();
+        Order order = orderRepo.findById(orderid)
+            .orElseThrow(() -> new OrderServiceException("Order"+ orderid + "not found", HttpStatus.NOT_FOUND));;
         order.setOrderStatus(OrderStatus.Finished);
         orderProducer.updateOrder_Finished(order);
         return order;
@@ -47,7 +51,8 @@ public class OrderService {
 
     @Transactional
     public Order updateOrderStatus_Cancelled(Integer orderid){
-        Order order = orderRepo.findByappUserID(orderid).orElseThrow();
+        Order order = orderRepo.findById(orderid)
+            .orElseThrow(() -> new OrderServiceException("Order"+ orderid + "not found",HttpStatus.NOT_FOUND));
         order.setOrderStatus(OrderStatus.Cancelled);
         orderProducer.updateOrder_Cancelled(order);
         return order;

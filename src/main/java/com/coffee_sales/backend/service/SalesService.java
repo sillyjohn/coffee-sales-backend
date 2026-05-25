@@ -86,22 +86,18 @@ public class SalesService {
     }
 
     public Sales placeOrder(SalesRequest salesRequest){
-        try{
-            Sales sales = new Sales();
-            Coffee coffee = coffeeService.getCoffeeById(salesRequest.getCoffeeId());
-            sales.setCoffee(coffee);
-            if(salesRequest.isAppUser()){
-                AppUser appUser = appUserService.findUserById(salesRequest.getAppUserId());
-                sales.setAppUser(appUser);
-            }else{
-                sales.setCustomerName(salesRequest.getCustomerName());
-                sales.setCustomerPhone(salesRequest.getCustomerPhone());
-                sales.setCustomerEmail(salesRequest.getCustomerEmail());
-            }
-            return addSales(sales);
-        }catch(Exception e){
-            throw new SalesServiceException("Failed to place order: "+e.getMessage());
+        Sales sales = new Sales();
+        Coffee coffee = coffeeService.getCoffeeById(salesRequest.getCoffeeId());
+        sales.setCoffee(coffee);
+        if(salesRequest.isAppUser()){
+            AppUser appUser = appUserService.findUserById(salesRequest.getAppUserId());
+            sales.setAppUser(appUser);
+        }else{
+            sales.setCustomerName(salesRequest.getCustomerName());
+            sales.setCustomerPhone(salesRequest.getCustomerPhone());
+            sales.setCustomerEmail(salesRequest.getCustomerEmail());
         }
+        return addSales(sales);
     }
 
     public Sales createSalesEntity(SalesRequest salesRequest) {
